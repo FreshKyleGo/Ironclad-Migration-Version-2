@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Ironclad Migration — Executive View</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+  :root {
+    --hf-dark-green: #062115;
+    --hf-lime: #91c13e;
+    --paper: #f7f7f5;
+    --paper-raised: #ffffff;
+    --ink: #16241c;
+    --ink-soft: #5c6b62;
+    --line: #e2e6e0;
+
+    --green: #2e9e46;
+    --green-bg: #e6f5e8;
+    --amber: #e0a418;
+    --amber-bg: #fdf3dc;
+    --red: #d33d2f;
+    --red-bg: #fbe4e1;
+    --slate: #8b93a0;
+
+    --sans: "Inter", "Helvetica Neue", Arial, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ============ HERO ============ */
+  .hero {
+    background: var(--hf-dark-green);
+    background-image:
+      linear-gradient(120deg, rgba(6,33,21,0.94) 0%, rgba(6,33,21,0.80) 55%, rgba(6,33,21,0.94) 100%),
+      repeating-linear-gradient(135deg, rgba(255,255,255,0.035) 0 2px, transparent 2px 26px);
+    color: #ffffff;
+    padding: 28px 36px 30px;
+  }
+
+  .hero-inner {
+    max-width: 1220px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .brand { display: flex; align-items: center; gap: 14px; }
+
+  .badge-lockup {
+    display: inline-flex;
+    flex-direction: column;
+    line-height: 1;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    font-size: 15px;
+  }
+  .badge-lockup .hello { color: #ffffff; }
+  .badge-lockup .fresh { color: var(--hf-lime); }
+
+  .brand-divider { width: 1px; height: 30px; background: rgba(255,255,255,0.25); }
+
+  .hero-title h1 { font-size: 22px; font-weight: 700; margin: 0; letter-spacing: -0.01em; }
+  .hero-title .subtitle { font-size: 12.5px; color: rgba(255,255,255,0.7); margin-top: 2px; }
+
+  .hero-meta { text-align: right; font-size: 12px; color: rgba(255,255,255,0.75); line-height: 1.6; }
+  .hero-meta .src-row { display: flex; align-items: center; justify-content: flex-end; gap: 6px; }
+  .hero-meta .src-row .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--hf-lime); display: inline-block; }
+  .hero-meta strong { color: #ffffff; font-weight: 600; }
+
+  /* ============ PAGE ============ */
+  .page { max-width: 1220px; margin: 0 auto; padding: 32px 36px 80px; }
+
+  /* ============ PHASE FUNNEL ============ */
+  .funnel-wrap { margin-bottom: 32px; }
+
+  .funnel-strip {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+  }
+
+  .funnel-step {
+    position: relative;
+    background: var(--paper-raised);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 12px 14px 14px;
+    text-align: center;
+  }
+
+  .funnel-step.current {
+    border-color: var(--hf-dark-green);
+    border-width: 2px;
+    box-shadow: 0 2px 8px rgba(6,33,21,0.08);
+  }
+
+  .funnel-step.done { background: var(--green-bg); border-color: var(--green); }
+  .funnel-step.at-risk { background: var(--red-bg); border-color: var(--red); }
+
+  .funnel-name {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    margin-bottom: 6px;
+  }
+
+  .funnel-step.done .funnel-name { color: var(--green); }
+  .funnel-step.current .funnel-name { color: var(--hf-dark-green); }
+  .funnel-step.at-risk .funnel-name { color: var(--red); }
+
+  .funnel-stat {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--ink);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .funnel-sub {
+    font-size: 10.5px;
+    color: var(--ink-soft);
+  }
+
+  .funnel-arrow {
+    position: absolute;
+    right: -9px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    background: var(--paper);
+    border-right: 1px solid var(--line);
+    border-top: 1px solid var(--line);
+    transform: translateY(-50%) rotate(45deg);
+    z-index: 2;
+  }
+
+  .funnel-step:last-child .funnel-arrow { display: none; }
+
+  /* ============ KPI STRIP (target vs gap) ============ */
+  .kpi-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 36px;
+  }
+
+  .kpi-card {
+    background: var(--paper-raised);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 18px 20px;
+    border-top: 3px solid var(--hf-dark-green);
+  }
+
+  .kpi-card.red { border-top-color: var(--red); }
+  .kpi-card.amber { border-top-color: var(--amber); }
+  .kpi-card.green { border-top-color: var(--green); }
+
+  .kpi-num { font-size: 26px; font-weight: 800; line-height: 1; margin-bottom: 4px; color: var(--hf-dark-green); }
+  .kpi-card.red .kpi-num { color: var(--red); }
+  .kpi-card.amber .kpi-num { color: var(--amber); }
+  .kpi-card.green .kpi-num { color: var(--green); }
+
+  .kpi-label { font-size: 12px; color: var(--ink-soft); line-height: 1.4; margin-bottom: 8px; }
+
+  .kpi-gap {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 4px;
+    display: inline-block;
+  }
+  .kpi-gap.on-track { background: var(--green-bg); color: var(--green); }
+  .kpi-gap.behind { background: var(--red-bg); color: var(--red); }
+  .kpi-gap.neutral { background: #f0efe9; color: var(--ink-soft); }
+
+  /* ============ SECTION HEADS ============ */
+  .section { margin-bottom: 40px; }
+  .section-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 16px; gap: 16px; }
+  .section-head h2 { font-size: 17px; font-weight: 700; margin: 0; color: var(--hf-dark-green); }
+  .section-head .section-note { font-size: 12px; color: var(--ink-soft); }
+
+  /* ============ COMPLEXITY MIX ============ */
+  .complexity-layout { display: grid; grid-template-columns: 260px 1fr; gap: 16px; align-items: stretch; }
+
+  .donut-card {
+    background: var(--paper-raised);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .donut { width: 150px; height: 150px; margin-bottom: 16px; }
+  .donut-center-label { font-size: 20px; font-weight: 800; fill: var(--hf-dark-green); }
+  .donut-center-sub { font-size: 8px; fill: var(--ink-soft); font-weight: 600; letter-spacing: 0.03em; }
+
+  .donut-legend { width: 100%; display: flex; flex-direction: column; gap: 8px; }
+  .donut-legend-row { display: flex; align-items: center; justify-content: space-between; font-size: 12px; }
+  .donut-legend-row .lbl { display: flex; align-items: baseline; gap: 6px; color: var(--ink); font-weight: 600; flex-wrap: wrap; }
+  .donut-legend-row .lbl-sub { font-weight: 400; color: var(--ink-soft); font-size: 10.5px; }
+  .donut-legend-row .sw { width: 9px; height: 9px; border-radius: 50%; }
+  .donut-legend-row .sw.green { background: var(--green); }
+  .donut-legend-row .sw.amber { background: var(--amber); }
+  .donut-legend-row .sw.red { background: var(--red); }
+  .donut-legend-row .val { font-weight: 700; color: var(--ink); }
+
+  .market-card { background: var(--paper-raised); border: 1px solid var(--line); border-radius: 10px; padding: 20px 22px; }
+  .market-card-head { font-size: 11px; font-weight: 700; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: 14px; }
+
+  .market-row { display: grid; grid-template-columns: 148px 1fr 46px; align-items: center; gap: 12px; padding: 7px 0; }
+  .market-name { font-size: 12.5px; font-weight: 600; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .market-bar { display: flex; height: 14px; border-radius: 3px; overflow: hidden; background: var(--line); }
+  .market-bar .seg.green { background: var(--green); }
+  .market-bar .seg.amber { background: var(--amber); }
+  .market-bar .seg.red { background: var(--red); }
+  .market-total { font-size: 11.5px; color: var(--ink-soft); text-align: right; font-weight: 600; }
+
+  /* ============ MILESTONE TABLE (dense, on-track focus) ============ */
+  .milestone-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--paper-raised);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .milestone-table th {
+    text-align: left;
+    font-size: 10.5px;
+    font-weight: 700;
+    color: #ffffff;
+    background: var(--hf-dark-green);
+    padding: 11px 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  .milestone-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--line);
+    font-size: 13px;
+    vertical-align: middle;
+  }
+
+  .milestone-table tr:last-child td { border-bottom: none; }
+  .milestone-table tr:hover td { background: #fafaf8; }
+
+  .m-phase-tag {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--ink-soft);
+    background: #f0efe9;
+    border-radius: 4px;
+    padding: 2px 7px;
+    display: inline-block;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+
+  .m-name { font-weight: 600; display: block; color: var(--ink); }
+  .m-key { font-size: 10.5px; color: var(--slate); display: block; margin-top: 2px; }
+
+  .status-flag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 9px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .status-flag .dot { width: 6px; height: 6px; border-radius: 50%; }
+  .status-flag.green { background: var(--green-bg); color: var(--green); }
+  .status-flag.green .dot { background: var(--green); }
+  .status-flag.amber { background: var(--amber-bg); color: var(--amber); }
+  .status-flag.amber .dot { background: var(--amber); }
+  .status-flag.red { background: var(--red-bg); color: var(--red); }
+  .status-flag.red .dot { background: var(--red); }
+
+  .schedule-verdict {
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .schedule-verdict.ontrack { color: var(--green); }
+  .schedule-verdict.tight { color: var(--amber); }
+  .schedule-verdict.missed { color: var(--red); }
+
+  .due-date { font-size: 12px; color: var(--ink-soft); white-space: nowrap; }
+  .due-date.overdue { color: var(--red); font-weight: 700; }
+  .status-txt { font-size: 12px; color: var(--ink-soft); }
+
+  footer {
+    margin-top: 8px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    font-size: 11.5px;
+    color: var(--ink-soft);
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  footer a { color: var(--hf-dark-green); text-decoration: none; font-weight: 600; }
+
+  @media (max-width: 900px) {
+    .funnel-strip { grid-template-columns: repeat(4, 1fr); }
+    .funnel-step:nth-child(4) .funnel-arrow { display: none; }
+  }
+
+  @media (max-width: 760px) {
+    .hero-inner { flex-direction: column; align-items: flex-start; }
+    .hero-meta { text-align: left; }
+    .kpi-strip { grid-template-columns: repeat(2, 1fr); }
+    .complexity-layout { grid-template-columns: 1fr; }
+    .funnel-strip { grid-template-columns: repeat(2, 1fr); }
+    .milestone-table { display: block; overflow-x: auto; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="brand">
+      <div class="badge-lockup">
+        <span class="hello">HELLO</span>
+        <span class="fresh">FRESH</span>
+      </div>
+      <div class="brand-divider"></div>
+      <div class="hero-title">
+        <h1>Ironclad Migration — Executive View</h1>
+        <div class="subtitle">People OPEX · DocuSign → Ironclad Program Status</div>
+      </div>
+    </div>
+    <div class="hero-meta">
+      <div class="src-row"><span class="dot"></span><strong>Jira: OPEXCI</strong></div>
+      <div>Sheet: Global Template Inventory</div>
+      <div>Refreshed <span id="pull-time">—</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="page">
+
+  <div class="funnel-wrap">
+    <div class="section-head">
+      <h2>Program phase</h2>
+      <div class="section-note">Where each workstream sits today</div>
+    </div>
+    <div class="funnel-strip" id="funnel-strip"></div>
+  </div>
+
+  <div class="kpi-strip" id="kpi-strip"></div>
+
+  <div class="section">
+    <div class="section-head">
+      <h2>Template complexity mix</h2>
+      <div class="section-note">297 templates clustered · 10 markets self-assessed</div>
+    </div>
+
+    <div class="complexity-layout">
+      <div class="donut-card">
+        <svg viewBox="0 0 200 200" class="donut" id="donut"></svg>
+        <div class="donut-legend" id="donut-legend"></div>
+      </div>
+      <div class="market-card">
+        <div class="market-card-head">By market — sorted by complexity mix</div>
+        <div id="market-rows"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head">
+      <h2>Milestones — on track or missed?</h2>
+      <div class="section-note">Every epic, with schedule verdict and days ahead/behind</div>
+    </div>
+
+    <table class="milestone-table">
+      <thead>
+        <tr>
+          <th>Milestone</th>
+          <th>Phase</th>
+          <th>Status</th>
+          <th>Flag</th>
+          <th>Due</th>
+          <th>Schedule</th>
+        </tr>
+      </thead>
+      <tbody id="milestone-body"></tbody>
+    </table>
+  </div>
+
+  <footer>
+    <span>Ironclad Migration Program · People OPEX</span>
+    <span>Data: <a href="#">Jira OPEXCI</a> &amp; Global Template Inventory sheet — see README for refresh setup</span>
+  </footer>
+
+</div>
+
+<script>
+  // ---------------------------------------------------------------
+  // EPICS — pulled from Jira project OPEXCI, issuetype = Epic.
+  // `phase` is derived from each epic's actual name/content, mapping
+  // onto the real Ironclad migration sequence.
+  // ---------------------------------------------------------------
+  function loadEpics() {
+    return [
+      { key: "OPEXCI-67",  name: "Project Scoping",                                    status: "In Progress", due: "2026-09-09", phase: "Scoping" },
+      { key: "OPEXCI-72",  name: "Governance & Decisions",                             status: "Open",        due: "2026-09-11", phase: "Governance" },
+      { key: "OPEXCI-125", name: "Steerco updates",                                    status: "Open",        due: "2026-12-31", phase: "Governance" },
+      { key: "OPEXCI-68",  name: "Data Collection",                                    status: "In Progress", due: "2026-09-25", phase: "Data Collection" },
+      { key: "OPEXCI-69",  name: "Build eSign Workflow (Cluster 1)",                   status: "Open",        due: "2026-09-25", phase: "Build" },
+      { key: "OPEXCI-71",  name: "Greenhouse–Ironclad Integration",                    status: "In Progress", due: "2026-12-31", phase: "Build" },
+      { key: "OPEXCI-137", name: "Build Workflows with minimal tagging (Cluster 2)",   status: "Open",        due: "2026-12-31", phase: "Build" },
+      { key: "OPEXCI-70",  name: "User Access + Testing + Go-Live (Cluster 1)",        status: "Open",        due: "2026-09-30", phase: "Go-Live" },
+      { key: "OPEXCI-183", name: "User Access + Testing + Go-Live (Cluster 2)",        status: "Open",        due: "2026-12-31", phase: "Go-Live" },
+      { key: "OPEXCI-169", name: "Post Mortem & Hypercare (Cluster 1)",                status: "Open",        due: "2026-10-30", phase: "Hypercare" },
+      { key: "OPEXCI-173", name: "Post Mortem & Hypercare (Cluster 2)",                status: "Open",        due: "2027-01-30", phase: "Hypercare" },
+      { key: "OPEXCI-197", name: "Formal project closure and sign-off",                status: "Open",        due: "2027-01-08", phase: "Closure" },
+    ];
+  }
+
+  const PHASE_ORDER = ["Scoping", "Governance", "Data Collection", "Build", "Go-Live", "Hypercare", "Closure"];
+
+  // ---------------------------------------------------------------
+  // COMPLEXITY MIX — Global Template Inventory sheet, Summary tab
+  // ---------------------------------------------------------------
+  function loadMarkets() {
+    return [
+      { name: "HelloFresh SE / CH / DACH KG", c1: 38, c2: 0,  c3: 0 },
+      { name: "NA (US + Canada)",             c1: 27, c2: 36, c3: 8 },
+      { name: "ANZ",                          c1: 8,  c2: 51, c3: 0 },
+      { name: "Poland",                       c1: 21, c2: 0,  c3: 0 },
+      { name: "HelloConnect",                 c1: 38, c2: 0,  c3: 0 },
+      { name: "FR",                           c1: 26, c2: 1,  c3: 0 },
+      { name: "BNLX",                         c1: 19, c2: 6,  c3: 0 },
+      { name: "NORDICS",                      c1: 15, c2: 0,  c3: 0 },
+      { name: "UK & IE",                      c1: 0,  c2: 3,  c3: 0 },
+      { name: "DACH Production",              c1: 0,  c2: 0,  c3: 0 },
+    ];
+  }
+
+  function loadComplexity() {
+    const markets = loadMarkets();
+    return markets.reduce((acc, m) => ({ c1: acc.c1 + m.c1, c2: acc.c2 + m.c2, c3: acc.c3 + m.c3 }), { c1: 0, c2: 0, c3: 0 });
+  }
+
+  const TODAY = new Date("2026-09-11");
+
+  function daysUntil(dueStr) {
+    const due = new Date(dueStr);
+    return Math.round((due - TODAY) / (1000 * 60 * 60 * 24));
+  }
+
+  function ragFor(status, days) {
+    if (days < 0) return "red";
+    if (status === "In Progress") return days <= 7 ? "amber" : "green";
+    if (days <= 3) return "red";
+    if (days <= 21) return "amber";
+    return "green";
+  }
+
+  function scheduleVerdict(days, rag) {
+    if (days < 0) return { cls: "missed", label: `${Math.abs(days)}d overdue` };
+    if (rag === "amber") return { cls: "tight", label: `${days}d left — tight` };
+    return { cls: "ontrack", label: `${days}d left — on track` };
+  }
+
+  function fmtDue(dueStr, days) {
+    const d = new Date(dueStr);
+    const label = d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+    return days < 0 ? `${label} (overdue)` : label;
+  }
+
+  // ---------------------------------------------------------------
+  // Phase funnel: for each phase, roll up its epics into a single
+  // step state — done / current / at-risk / upcoming — based on the
+  // real status + RAG of the epics in that phase.
+  // ---------------------------------------------------------------
+  function renderFunnel(epics) {
+    const withMeta = epics.map(e => ({ ...e, days: daysUntil(e.due), rag: ragFor(e.status, daysUntil(e.due)) }));
+
+    const steps = PHASE_ORDER.map(phase => {
+      const phaseEpics = withMeta.filter(e => e.phase === phase);
+      if (phaseEpics.length === 0) {
+        return { phase, state: "upcoming", stat: "—", sub: "Not yet started" };
+      }
+      const anyRed = phaseEpics.some(e => e.rag === "red");
+      const anyInProgress = phaseEpics.some(e => e.status === "In Progress");
+      const allDone = phaseEpics.every(e => e.status === "Done");
+
+      let state;
+      if (allDone) state = "done";
+      else if (anyRed) state = "at-risk";
+      else if (anyInProgress) state = "current";
+      else state = "upcoming";
+
+      const nearestDue = phaseEpics.reduce((min, e) => e.days < min ? e.days : min, Infinity);
+      const sub = state === "at-risk"
+        ? "Needs attention"
+        : nearestDue < 0
+          ? `${Math.abs(nearestDue)}d overdue`
+          : `${nearestDue}d to next due`;
+
+      return { phase, state, stat: `${phaseEpics.length} epic${phaseEpics.length > 1 ? "s" : ""}`, sub };
+    });
+
+    document.getElementById("funnel-strip").innerHTML = steps.map(s => `
+      <div class="funnel-step ${s.state}">
+        <div class="funnel-name">${s.phase}</div>
+        <div class="funnel-stat">${s.stat}</div>
+        <div class="funnel-sub">${s.sub}</div>
+        <div class="funnel-arrow"></div>
+      </div>
+    `).join("");
+  }
+
+  function renderKpis(epics) {
+    const withMeta = epics.map(e => ({ ...e, days: daysUntil(e.due), rag: ragFor(e.status, daysUntil(e.due)) }));
+    const counts = { red: 0, amber: 0, green: 0 };
+    withMeta.forEach(e => counts[e.rag]++);
+
+    const missed = withMeta.filter(e => e.days < 0).length;
+    const nextDue = withMeta.filter(e => e.days >= 0).sort((a, b) => a.days - b.days)[0];
+    const finalMilestone = withMeta.reduce((latest, e) => new Date(e.due) > new Date(latest.due) ? e : latest, withMeta[0]);
+    const programDays = daysUntil(finalMilestone.due);
+
+    const cards = [
+      {
+        num: withMeta.length, cls: "",
+        label: "Total milestones tracked",
+        gap: `<span class="kpi-gap neutral">${counts.green} green · ${counts.amber} yellow · ${counts.red} red</span>`
+      },
+      {
+        num: missed, cls: missed > 0 ? "red" : "green",
+        label: "Milestones past due date",
+        gap: missed > 0
+          ? `<span class="kpi-gap behind">Needs replan</span>`
+          : `<span class="kpi-gap on-track">None missed</span>`
+      },
+      {
+        num: nextDue ? `${nextDue.days}d` : "—", cls: nextDue && nextDue.rag === "red" ? "red" : nextDue && nextDue.rag === "amber" ? "amber" : "green",
+        label: nextDue ? `Until "${nextDue.name}" is due` : "No upcoming due dates",
+        gap: nextDue
+          ? `<span class="kpi-gap ${nextDue.rag === 'green' ? 'on-track' : 'behind'}">${nextDue.rag === 'green' ? 'On track' : 'Tight runway'}</span>`
+          : ""
+      },
+      {
+        num: `${programDays}d`, cls: "",
+        label: `Until program closure (${new Date(finalMilestone.due).toLocaleDateString("en-US", {month:"short", day:"numeric", year:"numeric"})})`,
+        gap: `<span class="kpi-gap neutral">Target: formal sign-off</span>`
+      },
+    ];
+
+    document.getElementById("kpi-strip").innerHTML = cards.map(c => `
+      <div class="kpi-card ${c.cls}">
+        <div class="kpi-num">${c.num}</div>
+        <div class="kpi-label">${c.label}</div>
+        ${c.gap}
+      </div>
+    `).join("");
+  }
+
+  function renderComplexity(mix) {
+    renderDonut(mix, mix.c1 + mix.c2 + mix.c3);
+  }
+
+  function renderDonut(mix, total) {
+    const cx = 100, cy = 100, r = 70, strokeW = 26;
+    const circumference = 2 * Math.PI * r;
+    const rootStyle = getComputedStyle(document.documentElement);
+    const segments = [
+      { value: mix.c1, color: rootStyle.getPropertyValue("--green").trim() },
+      { value: mix.c2, color: rootStyle.getPropertyValue("--amber").trim() },
+      { value: mix.c3, color: rootStyle.getPropertyValue("--red").trim() },
+    ];
+
+    let offset = 0;
+    const circles = segments.map(s => {
+      const frac = s.value / total;
+      const dash = frac * circumference;
+      const gap = circumference - dash;
+      const circle = `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${s.color}"
+        stroke-width="${strokeW}" stroke-dasharray="${dash} ${gap}"
+        stroke-dashoffset="${-offset}" transform="rotate(-90 ${cx} ${cy})" />`;
+      offset += dash;
+      return circle;
+    }).join("");
+
+    document.getElementById("donut").innerHTML = `
+      ${circles}
+      <text x="${cx}" y="${cy - 4}" text-anchor="middle" class="donut-center-label">${total}</text>
+      <text x="${cx}" y="${cy + 14}" text-anchor="middle" class="donut-center-sub">TEMPLATES</text>
+    `;
+
+    const legendRows = [
+      { cls: "green", label: "Cluster 1", sub: "Upload &amp; send", val: mix.c1 },
+      { cls: "amber", label: "Cluster 2", sub: "Reusable templates", val: mix.c2 },
+      { cls: "red",   label: "Cluster 3", sub: "Connected systems", val: mix.c3 },
+    ];
+    document.getElementById("donut-legend").innerHTML = legendRows.map(r => `
+      <div class="donut-legend-row">
+        <span class="lbl"><span class="sw ${r.cls}"></span>${r.label} <span class="lbl-sub">— ${r.sub}</span></span>
+        <span class="val">${r.val} · ${((r.val/total)*100).toFixed(0)}%</span>
+      </div>
+    `).join("");
+  }
+
+  function renderMarkets(markets) {
+    const withTotal = markets.map(m => ({
+      ...m, total: m.c1 + m.c2 + m.c3, weight: m.c3 * 100 + m.c2 * 10 + m.c1,
+    })).filter(m => m.total > 0);
+
+    withTotal.sort((a, b) => b.weight - a.weight);
+
+    document.getElementById("market-rows").innerHTML = withTotal.map(m => {
+      const p1 = (m.c1 / m.total) * 100;
+      const p2 = (m.c2 / m.total) * 100;
+      const p3 = (m.c3 / m.total) * 100;
+      return `
+        <div class="market-row">
+          <div class="market-name">${m.name}</div>
+          <div class="market-bar">
+            <div class="seg green" style="width:${p1}%"></div>
+            <div class="seg amber" style="width:${p2}%"></div>
+            <div class="seg red" style="width:${p3}%"></div>
+          </div>
+          <div class="market-total">${m.total}</div>
+        </div>
+      `;
+    }).join("");
+  }
+
+  function renderMilestones(epics) {
+    const withMeta = epics.map(e => {
+      const days = daysUntil(e.due);
+      const rag = ragFor(e.status, days);
+      return { ...e, days, rag, verdict: scheduleVerdict(days, rag) };
+    });
+
+    const order = { red: 0, amber: 1, green: 2 };
+    withMeta.sort((a, b) => order[a.rag] - order[b.rag] || a.days - b.days);
+
+    const ragLabel = { red: "Red", amber: "Yellow", green: "Green" };
+
+    document.getElementById("milestone-body").innerHTML = withMeta.map(e => `
+      <tr>
+        <td>
+          <span class="m-name">${e.name}</span>
+          <span class="m-key">${e.key}</span>
+        </td>
+        <td><span class="m-phase-tag">${e.phase}</span></td>
+        <td><span class="status-txt">${e.status}</span></td>
+        <td><span class="status-flag ${e.rag}"><span class="dot"></span>${ragLabel[e.rag]}</span></td>
+        <td><span class="due-date ${e.days < 0 ? 'overdue' : ''}">${fmtDue(e.due, e.days)}</span></td>
+        <td><span class="schedule-verdict ${e.verdict.cls}">${e.verdict.label}</span></td>
+      </tr>
+    `).join("");
+  }
+
+  function render() {
+    const epics = loadEpics();
+    const mix = loadComplexity();
+    const markets = loadMarkets();
+    renderFunnel(epics);
+    renderKpis(epics);
+    renderComplexity(mix);
+    renderMarkets(markets);
+    renderMilestones(epics);
+    document.getElementById("pull-time").textContent = new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  }
+
+  render();
+</script>
+</body>
+</html>

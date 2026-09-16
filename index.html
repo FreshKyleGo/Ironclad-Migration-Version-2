@@ -88,7 +88,7 @@
 
   .funnel-strip {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    grid-template-columns: repeat(8, 1fr);
     gap: 4px;
   }
 
@@ -357,8 +357,8 @@
       </div>
     </div>
     <div class="hero-meta">
-      <div class="src-row"><span class="dot"></span><strong>Jira: OPEXCI</strong></div>
-      <div>Sheet: Global Template Inventory</div>
+      <div class="src-row"><span class="dot"></span><strong>Sheet: Ironclad Migration Project Plan</strong></div>
+      <div>Sheet: Global Template Inventory (complexity mix)</div>
       <div>Refreshed <span id="pull-time">—</span></div>
     </div>
   </div>
@@ -417,35 +417,43 @@
 
   <footer>
     <span>Ironclad Migration Program · People OPEX</span>
-    <span>Data: <a href="#">Jira OPEXCI</a> &amp; Global Template Inventory sheet — see README for refresh setup</span>
+    <span>Data: <a href="#">Ironclad Migration Project Plan</a> &amp; Global Template Inventory sheet — see README for refresh setup</span>
   </footer>
 
 </div>
 
 <script>
   // ---------------------------------------------------------------
-  // EPICS — pulled from Jira project OPEXCI, issuetype = Epic.
-  // `phase` is derived from each epic's actual name/content, mapping
-  // onto the real Ironclad migration sequence.
+  // EPICS — pulled live from the published Google Sheet CSV
+  // (Ironclad Migration Project Plan) on 2026-09-16. RAG values are
+  // read directly from the sheet, NOT recomputed — the sheet is now
+  // hand-maintained and its RAG reflects real judgment calls, not
+  // just a due-date formula. Where a top-level row has no RAG of its
+  // own (a group header like "(Cluster 1) + Testing"), the worst RAG
+  // among its real child issues is used instead — flagged via
+  // ragRolledUp so the dashboard can show that distinction.
   // ---------------------------------------------------------------
   function loadEpics() {
     return [
-      { key: "OPEXCI-67",  name: "Project Scoping",                                    status: "In Progress", due: "2026-09-09", phase: "Scoping" },
-      { key: "OPEXCI-72",  name: "Governance & Decisions",                             status: "Open",        due: "2026-09-11", phase: "Governance" },
-      { key: "OPEXCI-125", name: "Steerco updates",                                    status: "Open",        due: "2026-12-31", phase: "Governance" },
-      { key: "OPEXCI-68",  name: "Data Collection",                                    status: "In Progress", due: "2026-09-25", phase: "Data Collection" },
-      { key: "OPEXCI-69",  name: "Build eSign Workflow (Cluster 1)",                   status: "Open",        due: "2026-09-25", phase: "Build" },
-      { key: "OPEXCI-71",  name: "Greenhouse–Ironclad Integration",                    status: "In Progress", due: "2026-12-31", phase: "Build" },
-      { key: "OPEXCI-137", name: "Build Workflows with minimal tagging (Cluster 2)",   status: "Open",        due: "2026-12-31", phase: "Build" },
-      { key: "OPEXCI-70",  name: "User Access + Testing + Go-Live (Cluster 1)",        status: "Open",        due: "2026-09-30", phase: "Go-Live" },
-      { key: "OPEXCI-183", name: "User Access + Testing + Go-Live (Cluster 2)",        status: "Open",        due: "2026-12-31", phase: "Go-Live" },
-      { key: "OPEXCI-169", name: "Post Mortem & Hypercare (Cluster 1)",                status: "Open",        due: "2026-10-30", phase: "Hypercare" },
-      { key: "OPEXCI-173", name: "Post Mortem & Hypercare (Cluster 2)",                status: "Open",        due: "2027-01-30", phase: "Hypercare" },
-      { key: "OPEXCI-197", name: "Formal project closure and sign-off",                status: "Open",        due: "2027-01-08", phase: "Closure" },
+      { key: '1', name: 'Project Scoping', status: 'Resolved', start: '2026-08-17', due: '2026-09-09', phase: 'Scoping', rag: 'green', ragRolledUp: false, childCount: 6 },
+      { key: '2', name: 'Governance & Decisions', status: 'In Progress', start: '2026-08-31', due: '2026-09-11', phase: 'Governance', rag: 'red', ragRolledUp: false, childCount: 2 },
+      { key: '3', name: 'Docusign', status: 'In Progress', start: null, due: '2026-09-30', phase: 'Build', rag: 'green', ragRolledUp: false, childCount: 3 },
+      { key: '4', name: 'Data Collection', status: 'In Progress', start: '2026-09-01', due: '2026-09-25', phase: 'Data Collection', rag: 'green', ragRolledUp: false, childCount: 2 },
+      { key: '5', name: 'Build eSign Workflow (Cluster 1)', status: 'In Progress', start: '2026-09-14', due: '2026-09-25', phase: 'Build', rag: 'green', ragRolledUp: false, childCount: 11 },
+      { key: '6', name: '(Cluster 1) + Testing', status: 'Open', start: null, due: null, phase: 'Build', rag: 'amber', ragRolledUp: true, childCount: 5 },
+      { key: '7', name: 'User Access + Enablement', status: 'Open', start: null, due: '2026-09-30', phase: 'Go-Live', rag: 'amber', ragRolledUp: false, childCount: 2 },
+      { key: '8', name: 'Post Mortem & Hypercare (Cluster 1)', status: 'Open', start: '2026-10-05', due: '2026-10-30', phase: 'Hypercare', rag: 'green', ragRolledUp: false, childCount: 5 },
+      { key: '9', name: 'Data Collection (Cluster 2)', status: 'In Progress', start: '2026-09-30', due: '2026-10-16', phase: 'Data Collection', rag: 'green', ragRolledUp: false, childCount: 4 },
+      { key: '10', name: 'Build eSign Workflow (Cluster 2)', status: 'In Progress', start: null, due: '2026-09-25', phase: 'Build', rag: 'green', ragRolledUp: false, childCount: 6 },
+      { key: '11', name: 'Go-Live (Cluster 2)', status: 'Open', start: null, due: '2026-12-31', phase: 'Go-Live', rag: 'green', ragRolledUp: false, childCount: 5 },
+      { key: '12', name: 'Post Mortem & Hypercare (Cluster 2)', status: 'Open', start: '2027-01-01', due: '2027-01-30', phase: 'Hypercare', rag: 'green', ragRolledUp: false, childCount: 6 },
+      { key: '13', name: 'Greenhouse-Ironclad Integration', status: 'In Progress', start: '2026-09-09', due: '2026-12-31', phase: 'Build', rag: 'green', ragRolledUp: false, childCount: 9 },
+      { key: '14', name: 'Formal project closure and sign-off', status: 'Open', start: '2027-01-04', due: '2027-01-08', phase: 'Closure', rag: 'green', ragRolledUp: false, childCount: 0 },
+      { key: '15', name: 'BAU', status: 'Open', start: null, due: '2027-01-08', phase: 'BAU', rag: 'green', ragRolledUp: false, childCount: 1 },
     ];
   }
 
-  const PHASE_ORDER = ["Scoping", "Governance", "Data Collection", "Build", "Go-Live", "Hypercare", "Closure"];
+  const PHASE_ORDER = ["Scoping", "Governance", "Data Collection", "Build", "Go-Live", "Hypercare", "Closure", "BAU"];
 
   // ---------------------------------------------------------------
   // COMPLEXITY MIX — Global Template Inventory sheet, Summary tab
@@ -470,40 +478,41 @@
     return markets.reduce((acc, m) => ({ c1: acc.c1 + m.c1, c2: acc.c2 + m.c2, c3: acc.c3 + m.c3 }), { c1: 0, c2: 0, c3: 0 });
   }
 
-  const TODAY = new Date("2026-09-11");
+  const TODAY = new Date("2026-09-16");
 
   function daysUntil(dueStr) {
+    if (!dueStr) return null;
     const due = new Date(dueStr);
     return Math.round((due - TODAY) / (1000 * 60 * 60 * 24));
   }
 
-  function ragFor(status, days) {
-    if (days < 0) return "red";
-    if (status === "In Progress") return days <= 7 ? "amber" : "green";
-    if (days <= 3) return "red";
-    if (days <= 21) return "amber";
-    return "green";
-  }
-
-  function scheduleVerdict(days, rag) {
+  // RAG is read directly from the sheet (e.rag) — never recomputed
+  // here. The sheet is hand-maintained now, so its RAG reflects real
+  // judgment, not just a due-date formula. This function only adds
+  // the "days" figure for DISPLAY, and a schedule verdict phrase.
+  function scheduleVerdict(days, rag, status) {
+    if (status === "Resolved") return { cls: "ontrack", label: "Done" };
+    if (days === null) return { cls: "ontrack", label: "No due date set" };
     if (days < 0) return { cls: "missed", label: `${Math.abs(days)}d overdue` };
     if (rag === "amber") return { cls: "tight", label: `${days}d left — tight` };
+    if (rag === "red") return { cls: "missed", label: `${days}d left — at risk` };
     return { cls: "ontrack", label: `${days}d left — on track` };
   }
 
   function fmtDue(dueStr, days) {
+    if (!dueStr) return "—";
     const d = new Date(dueStr);
     const label = d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
-    return days < 0 ? `${label} (overdue)` : label;
+    return days !== null && days < 0 ? `${label} (overdue)` : label;
   }
 
   // ---------------------------------------------------------------
   // Phase funnel: for each phase, roll up its epics into a single
   // step state — done / current / at-risk / upcoming — based on the
-  // real status + RAG of the epics in that phase.
+  // real status + RAG (from the sheet) of the epics in that phase.
   // ---------------------------------------------------------------
   function renderFunnel(epics) {
-    const withMeta = epics.map(e => ({ ...e, days: daysUntil(e.due), rag: ragFor(e.status, daysUntil(e.due)) }));
+    const withMeta = epics.map(e => ({ ...e, days: daysUntil(e.due) }));
 
     const steps = PHASE_ORDER.map(phase => {
       const phaseEpics = withMeta.filter(e => e.phase === phase);
@@ -512,7 +521,7 @@
       }
       const anyRed = phaseEpics.some(e => e.rag === "red");
       const anyInProgress = phaseEpics.some(e => e.status === "In Progress");
-      const allDone = phaseEpics.every(e => e.status === "Done");
+      const allDone = phaseEpics.every(e => e.status === "Resolved");
 
       let state;
       if (allDone) state = "done";
@@ -520,12 +529,17 @@
       else if (anyInProgress) state = "current";
       else state = "upcoming";
 
-      const nearestDue = phaseEpics.reduce((min, e) => e.days < min ? e.days : min, Infinity);
+      const withDue = phaseEpics.filter(e => e.days !== null);
+      const nearestDue = withDue.length > 0 ? withDue.reduce((min, e) => e.days < min ? e.days : min, Infinity) : null;
       const sub = state === "at-risk"
         ? "Needs attention"
-        : nearestDue < 0
-          ? `${Math.abs(nearestDue)}d overdue`
-          : `${nearestDue}d to next due`;
+        : state === "done"
+          ? "Complete"
+          : nearestDue === null
+            ? "No due date set"
+            : nearestDue < 0
+              ? `${Math.abs(nearestDue)}d overdue`
+              : `${nearestDue}d to next due`;
 
       return { phase, state, stat: `${phaseEpics.length} epic${phaseEpics.length > 1 ? "s" : ""}`, sub };
     });
@@ -541,14 +555,19 @@
   }
 
   function renderKpis(epics) {
-    const withMeta = epics.map(e => ({ ...e, days: daysUntil(e.due), rag: ragFor(e.status, daysUntil(e.due)) }));
+    const withMeta = epics.map(e => ({ ...e, days: daysUntil(e.due) }));
     const counts = { red: 0, amber: 0, green: 0 };
     withMeta.forEach(e => counts[e.rag]++);
 
-    const missed = withMeta.filter(e => e.days < 0).length;
-    const nextDue = withMeta.filter(e => e.days >= 0).sort((a, b) => a.days - b.days)[0];
-    const finalMilestone = withMeta.reduce((latest, e) => new Date(e.due) > new Date(latest.due) ? e : latest, withMeta[0]);
-    const programDays = daysUntil(finalMilestone.due);
+    // "Missed" excludes Resolved items even if their due date has
+    // passed — a completed milestone isn't overdue.
+    const missed = withMeta.filter(e => e.status !== "Resolved" && e.days !== null && e.days < 0).length;
+    const nextDue = withMeta
+      .filter(e => e.status !== "Resolved" && e.days !== null && e.days >= 0)
+      .sort((a, b) => a.days - b.days)[0];
+    const withDue = withMeta.filter(e => e.due !== null);
+    const finalMilestone = withDue.reduce((latest, e) => new Date(e.due) > new Date(latest.due) ? e : latest, withDue[0]);
+    const programDays = finalMilestone ? daysUntil(finalMilestone.due) : null;
 
     const cards = [
       {
@@ -571,8 +590,8 @@
           : ""
       },
       {
-        num: `${programDays}d`, cls: "",
-        label: `Until program closure (${new Date(finalMilestone.due).toLocaleDateString("en-US", {month:"short", day:"numeric", year:"numeric"})})`,
+        num: finalMilestone ? `${programDays}d` : "—", cls: "",
+        label: finalMilestone ? `Until program closure (${new Date(finalMilestone.due).toLocaleDateString("en-US", {month:"short", day:"numeric", year:"numeric"})})` : "No closure date set",
         gap: `<span class="kpi-gap neutral">Target: formal sign-off</span>`
       },
     ];
@@ -659,25 +678,31 @@
   function renderMilestones(epics) {
     const withMeta = epics.map(e => {
       const days = daysUntil(e.due);
-      const rag = ragFor(e.status, days);
-      return { ...e, days, rag, verdict: scheduleVerdict(days, rag) };
+      return { ...e, days, verdict: scheduleVerdict(days, e.rag, e.status) };
     });
 
     const order = { red: 0, amber: 1, green: 2 };
-    withMeta.sort((a, b) => order[a.rag] - order[b.rag] || a.days - b.days);
+    withMeta.sort((a, b) => {
+      const orderDiff = order[a.rag] - order[b.rag];
+      if (orderDiff !== 0) return orderDiff;
+      if (a.days === null && b.days === null) return 0;
+      if (a.days === null) return 1;
+      if (b.days === null) return -1;
+      return a.days - b.days;
+    });
 
     const ragLabel = { red: "Red", amber: "Yellow", green: "Green" };
 
     document.getElementById("milestone-body").innerHTML = withMeta.map(e => `
       <tr>
         <td>
-          <span class="m-name">${e.name}</span>
-          <span class="m-key">${e.key}</span>
+          <span class="m-name">${e.name}${e.childCount > 0 ? ` <span style="color:var(--slate);font-weight:400;font-size:11px;">(${e.childCount})</span>` : ''}</span>
+          <span class="m-key">#${e.key}${e.ragRolledUp ? ' · RAG from children' : ''}</span>
         </td>
         <td><span class="m-phase-tag">${e.phase}</span></td>
         <td><span class="status-txt">${e.status}</span></td>
         <td><span class="status-flag ${e.rag}"><span class="dot"></span>${ragLabel[e.rag]}</span></td>
-        <td><span class="due-date ${e.days < 0 ? 'overdue' : ''}">${fmtDue(e.due, e.days)}</span></td>
+        <td><span class="due-date ${e.days !== null && e.days < 0 && e.status !== 'Resolved' ? 'overdue' : ''}">${fmtDue(e.due, e.days)}</span></td>
         <td><span class="schedule-verdict ${e.verdict.cls}">${e.verdict.label}</span></td>
       </tr>
     `).join("");
